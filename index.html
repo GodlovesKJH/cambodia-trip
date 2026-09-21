@@ -78,6 +78,8 @@ h2.chapter{font-family:var(--serif);font-size:26px;line-height:1.35;margin:0 0 6
 .check.done{background:var(--leaf);border-color:var(--leaf);color:#fff}
 
 /* 선교지 */
+.m-photo{margin:0 0 26px}
+.m-photo img{display:block;width:100%;height:auto;border-radius:10px;background:var(--wash)}
 .facts{margin:0 0 30px}
 .facts div{display:grid;grid-template-columns:5.5em 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
 .facts dt{color:var(--muted);font-size:14px;padding-top:2px}
@@ -213,8 +215,10 @@ const VIEWS = {
   },
 
   mission(d){
-    const rows = d.mission || [];
-    if (!rows.length) return head('선교지', '선교지 소개를 준비하고 있습니다.');
+    const all = d.mission || [];
+    if (!all.length) return head('선교지', '선교지 소개를 준비하고 있습니다.');
+    const photos = all.filter(r => r.k === '사진').map(r => photoUrl(r.v)).filter(Boolean);
+    const rows = all.filter(r => r.k !== '사진');
     const facts = [], secs = []; let cur = null;
     rows.forEach(r => {
       if (String(r.k).startsWith('◆')) { cur = { title: r.k.replace(/^◆\s*/, ''), text: r.v, items: [] }; secs.push(cur); }
@@ -222,6 +226,7 @@ const VIEWS = {
       else if (r.k !== '항목') facts.push(r);
     });
     return head('선교지', '우리가 방문할 선교사님과 사역 현장입니다.') +
+      photos.map(src => `<figure class="m-photo"><img src="${esc(src)}" alt="이희철 · 문샛별 선교사 가정" loading="lazy"></figure>`).join('') +
       (facts.length ? `<dl class="facts">${facts.map(f => `<div><dt>${esc(f.k)}</dt><dd>${br(f.v)}</dd></div>`).join('')}</dl>` : '') +
       secs.map(s => `<section class="m-sec"><h3>${esc(s.title)}</h3>
         ${s.text ? (s.title.includes('요약') ? `<blockquote>${br(s.text)}</blockquote>` : `<p>${br(s.text)}</p>`) : ''}
@@ -241,6 +246,14 @@ const VIEWS = {
       </article>`).join('');
   },
 };
+
+/* 드라이브 공유 링크 → 이미지 주소 (사진은 '링크가 있는 모든 사용자' 공유 필요) */
+function photoUrl(u){
+  u = String(u || '').trim();
+  const m = u.match(/[-\w]{25,}/);
+  if (u.includes('drive.google.com') && m) return `https://drive.google.com/thumbnail?id=${m[0]}&sz=w1200`;
+  return /^https?:\/\//.test(u) ? u : '';
+}
 
 function head(title, lead){
   return (DEMO ? `<p class="notice">예시 화면입니다. 구글시트와 연결하면 실제 내용이 보입니다.</p>` : '') +
