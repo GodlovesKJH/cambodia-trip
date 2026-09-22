@@ -122,6 +122,8 @@ h2.chapter{font-family:var(--serif);font-size:26px;line-height:1.35;margin:0 0 6
 .tips li{padding:11px 0;border-bottom:1px solid var(--line)}
 .tips b{display:block}
 .tips span{color:var(--muted);font-size:15px}
+.tips.entry li{padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--sugar);border-radius:8px;margin-bottom:10px;background:var(--paper)}
+.tips.entry li:first-child{background:var(--sugar-soft)}
 /* 보고 */
 article.report{padding:0 0 30px;margin:0 0 30px;border-bottom:1px solid var(--line)}
 article.report time{font-size:13px;color:var(--sugar-ink);font-weight:600}
@@ -275,6 +277,8 @@ const VIEWS = {
     const more = links => (links || []).map(([t, u]) => `<a class="more" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join('');
     const years = list => `<ol class="years">${list.map(e => `<li><span class="y">${esc(e.y)}</span><div><b>${esc(e.t)}</b><p>${esc(e.d)}</p>${more(e.links)}</div></li>`).join('')}</ol>`;
     const secs = [
+      ['l-entry', '입국 준비 · 캄보디아 비자', '출발 전에 꼭 해야 할 일입니다. 빠지면 입국이 늦어지거나 비행기를 못 탈 수 있습니다.',
+        `<ul class="tips entry">${L.entry.map(m => `<li><b>${esc(m.t)}</b><span>${esc(m.d)}</span>${m.links ? `<div>${more(m.links)}</div>` : ''}</li>`).join('')}</ul>`],
       ['l-history', '캄보디아 역사', '앙코르의 영광부터 킬링필드의 상처, 그리고 재건까지.', years(L.history) + `<p>${more(L.historyMore)}</p>`],
       ['l-church', '캄보디아 기독교 역사', '거의 사라졌다가 다시 세워진 교회입니다.', years(L.church) + `<p>${more(L.churchMore)}</p>`],
       ['l-words', '생활 캄보디아어', '한글 발음은 가깝게 적은 것입니다. 현지에서 선교사님께 한 번 들어 보세요.',
@@ -372,6 +376,13 @@ $('#refresh').addEventListener('click', () => load(true));
 /* ---------- 알고 가기 (고정 내용) ---------- */
 const WIKI = t => 'https://ko.wikipedia.org/wiki/' + encodeURIComponent(t.replace(/ /g, '_'));
 const LEARN = {
+  entry: [
+    { t:'① 여권 유효기간 확인 (지금)', d:'입국일 기준 6개월 이상 남아 있어야 합니다. 2027년 7월 18일 이후에 만료되는 여권이어야 하고, 빈 페이지가 1장 이상 있어야 합니다.' },
+    { t:'② 관광비자 신청 — e비자 ($30)', d:'캄보디아는 비자가 필요합니다. 관광비자(30일, 1회 입국)는 $30이며, 출발 2~3주 전(12월 말~1월 초)에 공식 사이트에서 미리 받는 것을 권합니다. 처리에 약 3영업일이 걸리고, 이메일로 온 비자는 출력해서 여권과 함께 가져갑니다. 수수료를 더 받는 대행 사이트에 주의하세요.', links:[['e비자 공식 사이트', 'https://www.evisa.gov.kh/']] },
+    { t:'③ 전자입국신고(e-Arrival) 제출 (1/11~1/17)', d:'도착 7일 전부터 모든 입국자가 온라인으로 제출해야 합니다. 종이 입국·세관·검역신고서를 대신합니다. 완료 화면(QR)을 캡처해 두세요.', links:[['e-Arrival 공식 사이트', 'https://arrival.gov.kh/']] },
+    { t:'공항 도착비자도 가능하지만', d:'공항에서 태블릿으로 신청한 뒤 수수료를 따로 내야 해서 오래 기다릴 수 있습니다. 이 방법을 쓸 분은 $30 현금(깨끗한 지폐)과 증명사진 1장을 준비하세요.' },
+    { t:'기타', d:'돌아가는 항공권이 필요하고, 체류기간을 넘기면 하루 $10 벌금이 붙습니다. 규정은 바뀔 수 있어 출발 한 달 전에 한 번 더 확인해 안내드리겠습니다.' },
+  ],
   history: [
     { y:'1~6세기', t:'부남 · 진랍', d:'메콩강 유역에 초기 왕국이 세워지고 인도 문화(힌두교·불교)가 들어옵니다.', links:[['부남', WIKI('부남')]] },
     { y:'802년', t:'크메르(앙코르) 제국 시작', d:'자야바르만 2세가 나라를 하나로 묶고, 이후 약 600년간 동남아시아 대부분을 다스린 제국이 됩니다.', links:[['크메르 제국', WIKI('크메르 제국')]] },
