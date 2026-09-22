@@ -7,7 +7,7 @@
 <title>캄보디아 선교 답사</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌴</text></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+Khmer:wght@400;600&display=swap">
 <style>
 :root{
   --leaf:#1E4A38; --leaf-2:#2F6B52; --sugar:#C08A2B; --sugar-soft:#F6ECD9; --sugar-ink:#7A5516;
@@ -97,6 +97,31 @@ h2.chapter{font-family:var(--serif);font-size:26px;line-height:1.35;margin:0 0 6
 .prayer b{display:block}
 .prayer span{color:var(--muted);font-size:15px}
 
+
+/* 알고 가기 */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+.chips button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--leaf);border-radius:18px;padding:6px 14px;cursor:pointer}
+.l-sec{margin:0 0 36px;scroll-margin-top:60px}
+.l-sec h3{font-family:var(--serif);font-size:21px;margin:0 0 6px;color:var(--leaf)}
+.l-sec > p.t-desc{margin:0 0 16px}
+.years{list-style:none;margin:0;padding:0}
+.years li{display:grid;grid-template-columns:5.4em 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.years .y{font-weight:700;color:var(--sugar-ink);font-variant-numeric:tabular-nums;font-size:15px}
+.years b{display:block}
+.years p{margin:2px 0 0;color:var(--muted);font-size:15px}
+.more{display:inline-block;margin-top:4px;font-size:13px;color:var(--leaf-2);text-decoration:none;border-bottom:1px solid var(--line)}
+.more + .more{margin-left:10px}
+.phrases{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.phrase{border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+.phrase small{display:block;color:var(--muted);font-size:13px}
+.phrase b{display:block;font-size:18px;color:var(--leaf);margin:2px 0}
+.phrase .km{font-family:'Noto Sans Khmer',sans-serif;font-size:15px;color:var(--ink)}
+.phrase .note{display:block;font-size:12px;color:var(--sugar-ink);margin-top:2px}
+.phrase.wide{grid-column:1 / -1}
+.tips{list-style:none;margin:0;padding:0}
+.tips li{padding:11px 0;border-bottom:1px solid var(--line)}
+.tips b{display:block}
+.tips span{color:var(--muted);font-size:15px}
 /* 보고 */
 article.report{padding:0 0 30px;margin:0 0 30px;border-bottom:1px solid var(--line)}
 article.report time{font-size:13px;color:var(--sugar-ink);font-weight:600}
@@ -127,7 +152,7 @@ footer button{font:inherit;font-size:13px;color:var(--leaf);background:none;bord
 /* Apps Script 웹 앱 URL — 비어 있으면 예시 화면이 보입니다 */
 const API_URL = 'https://script.google.com/macros/s/AKfycbwEZ3L6UZprx8Zhl7pA7ypp6s0Txho9648msmZrCkn3fnCo-eZOmWQik1-fHJ7CYVziXQ/exec';
 
-const TABS = [['schedule','일정'],['budget','예산'],['people','참가자'],['mission','선교지'],['reports','탐방 보고']];
+const TABS = [['schedule','일정'],['budget','예산'],['people','참가자'],['mission','선교지'],['learn','알고 가기'],['reports','탐방 보고']];
 const STORE = 'cambodia-webbook-v1';
 const WEEK = ['일','월','화','수','목','금','토'];
 let DATA = null, DEMO = false;
@@ -245,6 +270,23 @@ const VIEWS = {
       </section>`).join('');
   },
 
+  learn(){
+    const L = LEARN;
+    const more = links => (links || []).map(([t, u]) => `<a class="more" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join('');
+    const years = list => `<ol class="years">${list.map(e => `<li><span class="y">${esc(e.y)}</span><div><b>${esc(e.t)}</b><p>${esc(e.d)}</p>${more(e.links)}</div></li>`).join('')}</ol>`;
+    const secs = [
+      ['l-history', '캄보디아 역사', '앙코르의 영광부터 킬링필드의 상처, 그리고 재건까지.', years(L.history) + `<p>${more(L.historyMore)}</p>`],
+      ['l-church', '캄보디아 기독교 역사', '거의 사라졌다가 다시 세워진 교회입니다.', years(L.church) + `<p>${more(L.churchMore)}</p>`],
+      ['l-words', '생활 캄보디아어', '한글 발음은 가깝게 적은 것입니다. 현지에서 선교사님께 한 번 들어 보세요.',
+        `<div class="phrases">${L.words.map(w => `<div class="phrase${w.wide ? ' wide' : ''}"><small>${esc(w.ko)}</small><b>${esc(w.say)}</b><span class="km" lang="km">${esc(w.km)}</span>${w.note ? `<span class="note">${esc(w.note)}</span>` : ''}</div>`).join('')}</div><p>${more(L.wordsMore)}</p>`],
+      ['l-manners', '예절과 생활 팁', '작은 배려가 현지 분들께 큰 존중으로 전해집니다.',
+        `<ul class="tips">${L.manners.map(m => `<li><b>${esc(m.t)}</b><span>${esc(m.d)}</span></li>`).join('')}</ul>`],
+    ];
+    return head('알고 가기', '출발 전에 읽어 두면 현장에서 더 많이 보입니다.') +
+      `<div class="chips">${secs.map(x => `<button type="button" data-go="${x[0]}">${x[1].replace('캄보디아 ', '')}</button>`).join('')}</div>` +
+      secs.map(([id, t, lead, body]) => `<section class="l-sec" id="${id}"><h3>${t}</h3><p class="t-desc">${lead}</p>${body}</section>`).join('');
+  },
+
   reports(d){
     const rs = d.reports || [];
     if (!rs.length) return head('탐방 보고', '') + `<div class="empty">답사가 시작되면 날마다 현장 소식이 이곳에 올라옵니다.</div>`;
@@ -300,6 +342,10 @@ function render(){
   if (active) active.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 window.addEventListener('hashchange', render);
+$('#main').addEventListener('click', e => {
+  const b = e.target.closest('[data-go]'); if (!b) return;
+  const el = document.getElementById(b.dataset.go); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 
 /* ---------- 불러오기 (오프라인이면 마지막 저장본) ---------- */
 async function load(force){
@@ -322,6 +368,71 @@ async function load(force){
   }
 }
 $('#refresh').addEventListener('click', () => load(true));
+
+/* ---------- 알고 가기 (고정 내용) ---------- */
+const WIKI = t => 'https://ko.wikipedia.org/wiki/' + encodeURIComponent(t.replace(/ /g, '_'));
+const LEARN = {
+  history: [
+    { y:'1~6세기', t:'부남 · 진랍', d:'메콩강 유역에 초기 왕국이 세워지고 인도 문화(힌두교·불교)가 들어옵니다.', links:[['부남', WIKI('부남')]] },
+    { y:'802년', t:'크메르(앙코르) 제국 시작', d:'자야바르만 2세가 나라를 하나로 묶고, 이후 약 600년간 동남아시아 대부분을 다스린 제국이 됩니다.', links:[['크메르 제국', WIKI('크메르 제국')]] },
+    { y:'12세기', t:'앙코르 와트 건립', d:'수리야바르만 2세 때 세워진 세계 최대의 종교 건축물로, 오늘날 국기에도 그려져 있습니다.', links:[['앙코르 와트', WIKI('앙코르 와트')]] },
+    { y:'1431년', t:'앙코르 함락', d:'시암(태국 아유타야)의 침공으로 수도를 남쪽으로 옮기고, 이후 태국과 베트남 사이에서 오랫동안 쇠퇴합니다.' },
+    { y:'1863년', t:'프랑스 보호국', d:'프랑스의 보호국이 되었다가 프랑스령 인도차이나에 편입되어 약 90년간 식민 지배를 받습니다.', links:[['프랑스령 인도차이나', WIKI('프랑스령 인도차이나')]] },
+    { y:'1953년', t:'독립', d:'노로돔 시아누크 국왕의 주도로 11월 9일 독립합니다. 이날은 지금도 독립기념일입니다.', links:[['노로돔 시아누크', WIKI('노로돔 시아누크')]] },
+    { y:'1970년', t:'쿠데타와 내전', d:'론 놀 장군의 쿠데타로 크메르 공화국이 세워지고, 베트남 전쟁의 폭격과 내전이 이어집니다.', links:[['크메르 공화국', WIKI('크메르 공화국')]] },
+    { y:'1975~79년', t:'크메르 루주와 킬링필드', d:'폴 포트의 크메르 루주가 도시민을 농촌으로 강제 이주시키고 종교·교육·화폐를 없앴습니다. 약 4년 사이 인구의 약 4분의 1(150만~200만 명 추정)이 학살·굶주림·강제노동으로 목숨을 잃었습니다.', links:[['크메르 루주', WIKI('크메르 루주')], ['캄보디아 집단학살', WIKI('캄보디아 집단학살')], ['툴슬렝 박물관', WIKI('툴슬렝 집단학살 박물관')]] },
+    { y:'1979년', t:'베트남군 진입', d:'크메르 루주 정권이 무너지고 베트남의 영향 아래 새 정부가 들어서지만, 국경 지대의 내전은 1990년대까지 계속됩니다.', links:[['베트남-캄보디아 전쟁', WIKI('베트남-캄보디아 전쟁')]] },
+    { y:'1991~93년', t:'평화협정과 유엔 관리 총선', d:'파리 평화협정 후 유엔 과도 통치기구(UNTAC) 관리 아래 총선이 치러지고, 입헌군주제가 회복됩니다.', links:[['유엔 과도 통치기구', WIKI('유엔 캄보디아 과도 통치기구')]] },
+    { y:'1997년', t:'한국과 다시 수교', d:'대한민국과 외교 관계를 다시 맺은 뒤, 한국은 캄보디아의 주요 투자·원조국이 되었습니다.', links:[['대한민국-캄보디아 관계', WIKI('대한민국-캄보디아 관계')]] },
+    { y:'2023년', t:'세대교체', d:'약 38년간 총리를 지낸 훈 센의 뒤를 이어 아들 훈 마넷이 총리가 됩니다. 인구의 절반 이상이 30세 이하인 젊은 나라입니다.', links:[['훈 마넷', WIKI('훈 마넷')]] },
+  ],
+  historyMore: [['캄보디아의 역사 전체', WIKI('캄보디아의 역사')]],
+  church: [
+    { y:'1555년', t:'첫 선교사', d:'포르투갈 도미니코회 가스파르 다 크루스가 들어왔으나, 불교 문화의 벽 앞에 1년 만에 떠났습니다.' },
+    { y:'1923년', t:'개신교 선교 시작', d:'미국 C&MA(기독교선교연맹) 선교사들이 프놈펜에 들어와 개신교 선교를 시작합니다. 약 40년 뒤에도 성도는 2천 명 정도였습니다.' },
+    { y:'1954년', t:'크메르어 성경 완역', d:'선교사 아서 해먼드가 1934년 신약을, 1954년 성경 전체를 크메르어로 펴냈습니다.' },
+    { y:'1970~75년', t:'전쟁 속의 성장', d:'내전의 혼란 속에서 복음을 받아들이는 사람이 늘며 교회가 빠르게 자랐습니다.' },
+    { y:'1975~79년', t:'박해와 거의 사라진 교회', d:'크메르 루주는 모든 종교를 금지했습니다. 목회자와 성도 대부분이 목숨을 잃거나 흩어져, 교회는 거의 사라졌습니다.' },
+    { y:'1980년대', t:'난민촌의 교회', d:'태국 국경 난민촌에서 많은 사람이 복음을 듣고, 흩어진 성도들이 숨어서 믿음을 지켰습니다.' },
+    { y:'1990년대~', t:'다시 세워지는 교회', d:'종교 활동이 다시 허용된 뒤 도시와 농촌에 교회가 세워지고, 한국 선교사도 많이 들어왔습니다. 지금도 인구의 약 97%가 불교도이고, 기독교인은 소수(통계에 따라 1~3%)입니다.' },
+  ],
+  churchMore: [['캄보디아의 종교', WIKI('캄보디아의 종교')], ['기독교 역사 (영문)', 'https://en.wikipedia.org/wiki/Religion_in_Cambodia#Christianity'], ['가톨릭 역사 (영문)', 'https://en.wikipedia.org/wiki/Catholic_Church_in_Cambodia']],
+  words: [
+    { ko:'안녕하세요 (공손)', say:'쭘리읍 쑤어', km:'ជំរាបសួរ', note:'합장 인사(쏨뻬아)와 함께' },
+    { ko:'안녕하세요 (편하게)', say:'쑤어 쓰다이', km:'សួស្តី' },
+    { ko:'감사합니다', say:'어꾼', km:'អរគុណ' },
+    { ko:'정말 감사합니다', say:'어꾼 쯔란', km:'អរគុណច្រើន' },
+    { ko:'네 (남자)', say:'밧', km:'បាទ' },
+    { ko:'네 (여자)', say:'짜', km:'ចាស' },
+    { ko:'아니요', say:'엇 떼', km:'អត់ទេ' },
+    { ko:'괜찮아요', say:'민 아이 떼', km:'មិនអីទេ' },
+    { ko:'죄송합니다 · 실례합니다', say:'쏨 또', km:'សុំទោស' },
+    { ko:'잘 지내세요?', say:'쏙 써바이 떼?', km:'សុខសប្បាយទេ?', note:'대답: 쏙 써바이 (잘 지내요)' },
+    { ko:'제 이름은 ○○입니다', say:'크뇸 츠무어 ○○', km:'ខ្ញុំឈ្មោះ...' },
+    { ko:'이름이 뭐예요?', say:'네악 츠무어 아위?', km:'អ្នកឈ្មោះអ្វី?' },
+    { ko:'맛있어요', say:'층안', km:'ឆ្ងាញ់' },
+    { ko:'좋아요', say:'러어', km:'ល្អ' },
+    { ko:'얼마예요?', say:'뽄만?', km:'ប៉ុន្មាន?' },
+    { ko:'물', say:'뜩', km:'ទឹក' },
+    { ko:'화장실이 어디예요?', say:'번똡 뜩 너으 아에 나?', km:'បន្ទប់ទឹកនៅឯណា?', wide:true },
+    { ko:'안녕히 계세요 (작별)', say:'리어 하어이', km:'លាហើយ', wide:true },
+    { ko:'예수님이 당신을 사랑하십니다', say:'쁘레아 예수 스롤란 네악', km:'ព្រះយេស៊ូស្រឡាញ់អ្នក', wide:true },
+    { ko:'숫자 1 · 2 · 3 · 4 · 5 · 10', say:'무오이 · 삐 · 버이 · 부언 · 쁘람 · 덥', km:'មួយ · ពីរ · បី · បួន · ប្រាំ · ដប់', wide:true },
+  ],
+  wordsMore: [['크메르어 알아보기', WIKI('크메르어')]],
+  manners: [
+    { t:'인사는 합장(쏨뻬아)으로', d:'두 손을 가슴 앞에 모으고 가볍게 고개를 숙입니다. 어른이나 스님께는 손을 더 높이 올립니다.' },
+    { t:'머리는 만지지 않기', d:'머리는 가장 귀한 곳으로 여깁니다. 귀엽더라도 아이들 머리를 쓰다듬지 마세요.' },
+    { t:'발은 낮은 곳', d:'발바닥이 사람이나 불상을 향하지 않게 앉고, 발로 물건을 가리키거나 밀지 않습니다.' },
+    { t:'물건은 오른손이나 두 손으로', d:'어른께 드릴 때는 두 손으로, 또는 오른손을 왼손으로 받쳐서 건넵니다.' },
+    { t:'사원 · 왕궁 방문 복장', d:'어깨와 무릎을 가리고, 건물 안에서는 신발과 모자를 벗습니다.' },
+    { t:'스님과의 예절', d:'여성은 스님의 몸이나 옷에 닿지 않도록 하고, 물건도 직접 건네지 않습니다.' },
+    { t:'사진은 먼저 묻기', d:'사람, 특히 아이를 찍을 때는 허락을 구합니다. 공개 보고에는 아이 얼굴 정면 사진과 현지 성도 실명을 싣지 않습니다.' },
+    { t:'화내지 않기', d:'큰 소리로 화내거나 공개적으로 꾸짖는 것은 체면을 크게 상하게 합니다. 웃으며 천천히 이야기하세요.' },
+    { t:'돈은 달러와 리엘', d:'달러가 널리 쓰이고, 1달러 미만 잔돈은 리엘(1달러 ≈ 약 4,000리엘)로 받습니다. 찢어진 달러 지폐는 받지 않으니 깨끗한 지폐를 준비하세요.' },
+    { t:'물은 사서 마시기', d:'수돗물은 마시지 않고, 병에 든 물을 마십니다. 얼음도 가능하면 피하세요.' },
+  ],
+};
 
 /* ---------- 예시 데이터 ---------- */
 const DEMO_DATA = {
