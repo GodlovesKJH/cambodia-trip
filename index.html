@@ -217,7 +217,7 @@ const VIEWS = {
   mission(d){
     const all = d.mission || [];
     if (!all.length) return head('선교지', '선교지 소개를 준비하고 있습니다.');
-    const photos = all.filter(r => r.k === '사진').map(r => photoUrl(r.v)).filter(Boolean);
+    const photos = all.filter(r => r.k === '사진').map(r => String(r.v || '').trim()).filter(v => photoUrl(v));
     const rows = all.filter(r => r.k !== '사진');
     const facts = [], secs = []; let cur = null;
     rows.forEach(r => {
@@ -226,7 +226,7 @@ const VIEWS = {
       else if (r.k !== '항목') facts.push(r);
     });
     return head('선교지', '우리가 방문할 선교사님과 사역 현장입니다.') +
-      photos.map(src => `<figure class="m-photo"><img src="${esc(src)}" alt="이희철 · 문샛별 선교사 가정" loading="lazy"></figure>`).join('') +
+      photos.map(src => `<figure class="m-photo">${imgTag(src, '이희철 · 문샛별 선교사 가정')}</figure>`).join('') +
       (facts.length ? `<dl class="facts">${facts.map(f => `<div><dt>${esc(f.k)}</dt><dd>${br(f.v)}</dd></div>`).join('')}</dl>` : '') +
       secs.map(s => `<section class="m-sec"><h3>${esc(s.title)}</h3>
         ${s.text ? (s.title.includes('요약') ? `<blockquote>${br(s.text)}</blockquote>` : `<p>${br(s.text)}</p>`) : ''}
@@ -240,7 +240,7 @@ const VIEWS = {
     return head('탐방 보고', '현장에서 보고 들은 것을 나눕니다.') +
       rs.map(r => `<article class="report">
         <time>${dayLabel(r.date)}</time><h3>${esc(r.title)}</h3>
-        ${(r.images || []).map(src => `<img src="${esc(src)}" alt="${esc(r.title)} 현장 사진" loading="lazy">`).join('')}
+        ${(r.images || []).map(src => imgTag(src, `${r.title} 현장 사진`)).join('')}
         ${String(r.body || '').split(/\n{2,}/).map(p => `<p>${br(p)}</p>`).join('')}
         ${r.author ? `<p class="by">${esc(r.author)}</p>` : ''}
       </article>`).join('');
@@ -248,11 +248,28 @@ const VIEWS = {
 };
 
 /* 드라이브 공유 링크 → 이미지 주소 (사진은 '링크가 있는 모든 사용자' 공유 필요) */
+function driveId(u){
+  u = String(u || '');
+  const m = u.match(/[-\w]{25,}/);
+  return (u.includes('drive.google.com') || u.includes('googleusercontent.com')) && m ? m[0] : '';
+}
 function photoUrl(u){
   u = String(u || '').trim();
-  const m = u.match(/[-\w]{25,}/);
-  if (u.includes('drive.google.com') && m) return `https://drive.google.com/thumbnail?id=${m[0]}&sz=w1200`;
+  const id = driveId(u);
+  if (id) return `https://lh3.googleusercontent.com/d/${id}=w1200`;
   return /^https?:\/\//.test(u) ? u : '';
+}
+// 구글 이미지 주소가 브라우저·로그인 상태에 따라 막힐 때 다른 주소로 차례로 다시 시도
+function imgFallback(el){
+  const id = el.dataset.id; if (!id) return;
+  const alts = [`https://drive.google.com/thumbnail?id=${id}&sz=w1200`, `https://drive.google.com/uc?export=view&id=${id}`];
+  const n = +(el.dataset.try || 0);
+  if (n < alts.length) { el.dataset.try = n + 1; el.src = alts[n]; }
+  else { const f = el.closest('figure'); if (f) f.style.display = 'none'; }
+}
+function imgTag(src, alt){
+  const id = driveId(src);
+  return `<img src="${esc(photoUrl(src) || src)}" alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer"${id ? ` data-id="${id}" onerror="imgFallback(this)"` : ''}>`;
 }
 
 function head(title, lead){
