@@ -59,6 +59,11 @@ h2.chapter{font-family:var(--serif);font-size:26px;line-height:1.35;margin:0 0 6
 .totals div{background:var(--paper);padding:14px 16px}
 .totals small{display:block;color:var(--muted);font-size:13px}
 .totals strong{font-size:19px;font-variant-numeric:tabular-nums}
+.totals .hi{background:var(--sugar-soft)}
+.totals .hi strong{color:var(--sugar-ink)}
+.totals .wide{grid-column:1 / -1}
+.per-note{margin:-16px 0 18px;font-size:13px}
+.cat .row.sub .num{font-size:13px;color:var(--sugar-ink)}
 .cat{padding:13px 0;border-bottom:1px solid var(--line)}
 .cat .row{display:flex;justify-content:space-between;gap:12px}
 .cat .num{font-variant-numeric:tabular-nums;color:var(--muted);font-size:15px;text-align:right}
@@ -186,21 +191,27 @@ const VIEWS = {
 
   budget(d){
     const b = d.budget || {};
+    const n = Number(b.people) || 0;
+    const per = v => n ? Math.round((Number(v) || 0) / n) : 0;
     const left = (b.totalPlan || 0) - (b.totalUsed || 0);
+    const usedPer = b.perPerson || per(b.totalUsed);
     const cats = (b.categories || []).map(c => {
       const pct = c.plan ? Math.min(c.used / c.plan, 1) * 100 : 0;
       return `<div class="cat"><div class="row"><span>${esc(c.name)}</span>
         <span class="num"><b>${won(c.used)}</b>${c.plan ? ` / ${won(c.plan)}` : ''}</span></div>
+        ${c.plan && n ? `<div class="row sub"><span></span><span class="num">1인 ${won(per(c.plan))}</span></div>` : ''}
         ${c.plan ? `<div class="bar"><i class="${c.used > c.plan ? 'over' : ''}" style="width:${pct}%"></i></div>` : ''}
         ${c.memo ? `<div class="t-desc">${esc(c.memo)}</div>` : ''}</div>`;
     }).join('');
     return head('예산', '공금으로만 운영하며, 사용한 금액은 영수증 기록을 바탕으로 자동 반영됩니다.') +
       `<div class="totals">
         <div><small>계획 예산</small><strong>${won(b.totalPlan)}</strong></div>
+        <div class="hi"><small>1인당 예상 비용${n ? ` (${n}명)` : ''}</small><strong>${won(per(b.totalPlan))}</strong></div>
         <div><small>사용한 금액</small><strong>${won(b.totalUsed)}</strong></div>
-        <div><small>남은 예산</small><strong>${won(left)}</strong></div>
-        <div><small>1인당 경비${b.people ? ` (${b.people}명)` : ''}</small><strong>${won(b.perPerson)}</strong></div>
-      </div>${cats}`;
+        <div><small>1인당 사용</small><strong>${won(usedPer)}</strong></div>
+        <div class="wide"><small>남은 예산</small><strong>${won(left)}</strong></div>
+      </div>
+      ${n ? `<p class="t-desc per-note">1인당 금액은 전체 예산을 참가자 ${n}명이 똑같이 나눈 금액입니다. 인원이 바뀌면 자동으로 다시 계산됩니다.</p>` : ''}${cats}`;
   },
 
   people(d){
