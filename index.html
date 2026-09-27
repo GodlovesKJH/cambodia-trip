@@ -57,6 +57,17 @@ h2.chapter{font-family:var(--serif);font-size:26px;line-height:1.35;margin:0 0 6
 .team-sec > h3{font-family:var(--serif);font-size:21px;margin:0 0 6px;color:var(--leaf)}
 .team-sec > p.t-desc{margin:0 0 22px}
 
+/* 사전회의 */
+.mt-group{margin:0 0 28px}
+.mt-group h3{font-family:var(--serif);font-size:20px;margin:0 0 10px;color:var(--leaf)}
+.mt{list-style:none;margin:0;padding:0;counter-reset:mt}
+.mt li{padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--line);border-radius:8px;margin:0 0 10px}
+.mt li.todo{border-left-color:var(--sugar)}
+.mt li.done{border-left-color:var(--leaf-2);background:var(--wash)}
+.mt b{display:block}
+.mt .ref{display:block;color:var(--muted);font-size:14px;margin-top:4px}
+.mt .dec{display:block;margin-top:8px;font-size:15px;color:var(--leaf);font-weight:600}
+
 /* 예산 */
 .totals{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:28px}
 .totals div{background:var(--paper);padding:14px 16px}
@@ -165,7 +176,7 @@ footer button{font:inherit;font-size:13px;color:var(--leaf);background:none;bord
 /* Apps Script 웹 앱 URL — 비어 있으면 예시 화면이 보입니다 */
 const API_URL = 'https://script.google.com/macros/s/AKfycbwEZ3L6UZprx8Zhl7pA7ypp6s0Txho9648msmZrCkn3fnCo-eZOmWQik1-fHJ7CYVziXQ/exec';
 
-const TABS = [['schedule','일정'],['budget','예산'],['people','참가자'],['mission','선교지'],['learn','알고 가기'],['reports','탐방 보고']];
+const TABS = [['schedule','일정'],['meeting','사전회의'],['budget','예산'],['people','참가자'],['mission','선교지'],['learn','알고 가기'],['reports','탐방 보고']];
 const STORE = 'cambodia-webbook-v1';
 const WEEK = ['일','월','화','수','목','금','토'];
 let DATA = null, DEMO = false;
@@ -239,6 +250,17 @@ const VIEWS = {
         <h3>태국팀 일정</h3>
         <p class="t-desc">태국팀은 본진을 배웅한 뒤 캄보디아에 더 머물고, 태국을 거쳐 1월 29일에 귀국합니다. 1월 18일 출국편은 본진과 같습니다.</p>
         ${group(team)}</section>` : '');
+  },
+
+  meeting(){
+    const M = MEETING;
+    const cats = [...new Set(M.items.map(i => i.c))];
+    const open = M.items.filter(i => !i.d).length;
+    return head('사전회의', `출발 전에 함께 정할 것들입니다${M.date ? ` (${esc(M.date)})` : ''}. 회의에서 정해지면 이곳에 결과를 적어 두겠습니다.`) +
+      `<p class="ready">정할 것 <b>${open}개</b> 남음 / ${M.items.length}개</p>` +
+      cats.map(c => `<section class="mt-group"><h3>${esc(c)}</h3><ul class="mt">${
+        M.items.filter(i => i.c === c).map(i => `<li class="${i.d ? 'done' : 'todo'}"><b>${esc(i.t)}${i.d ? '' : '<span class="tag">결정 전</span>'}</b>${i.n ? `<span class="ref">${esc(i.n)}</span>` : ''}${i.d ? `<span class="dec">✓ ${esc(i.d)}</span>` : ''}</li>`).join('')
+      }</ul></section>`).join('');
   },
 
   budget(d){
@@ -493,6 +515,28 @@ const LEARN = {
     { t:'화내지 않기', d:'큰 소리로 화내거나 공개적으로 꾸짖는 것은 체면을 크게 상하게 합니다. 웃으며 천천히 이야기하세요.' },
     { t:'돈은 달러와 리엘', d:'달러가 널리 쓰이고, 1달러 미만 잔돈은 리엘(1달러 ≈ 약 4,000리엘)로 받습니다. 찢어진 달러 지폐는 받지 않으니 깨끗한 지폐를 준비하세요.' },
     { t:'물은 사서 마시기', d:'수돗물은 마시지 않고, 병에 든 물을 마십니다. 얼음도 가능하면 피하세요.' },
+  ],
+};
+
+/* ---------- 사전회의 안건 (고정 내용 · 원본은 기획시트 '사전회의' 탭) ---------- */
+// d(결정)가 채워지면 '결정 전' 표시가 사라지고 결과가 초록색으로 보입니다.
+const MEETING = {
+  date: '',
+  items: [
+    { c:'숙소', t:'태국팀 캄보디아 연장 숙박 (1/21~24, 목·금·토·일)', n:'', d:'4박으로 확정' },
+    { c:'숙소', t:'태국팀 연장 기간 숙소 — 호텔 / 게스트하우스 / 교회 중 선택', n:'선교사님 말씀: 게스트하우스는 호텔보다 시설과 치안이 떨어지고 2인 1실이 많습니다. 교회는 머물 수 있지만 침구 · 세면 · 끼니를 준비해야 합니다. 교회로 하면 차량은 필요한 날만 빌릴 수 있습니다.' },
+    { c:'숙소', t:'교회 숙박(1/19~20) 준비 — 침구 · 세면도구, 교회에서의 끼니', n:'선교사님이 꼽은 교회 숙박의 불편한 점: 침구, 씻는 것, 식사(주변에 식당이 없어 끼니마다 준비 필요).' },
+    { c:'비용', t:'회비 금액 · 납부 기한 · 납부 방법', n:'1인 약 30만 원. 답사 후 정산해 남으면 돌려드리고 모자라면 더 걷습니다. 항공권은 각자 결제합니다.' },
+    { c:'비용', t:'현지 교회 헌금 · 후원 규모', n:'교회에서 정할 사항입니다. 예산에 아직 들어 있지 않습니다.' },
+    { c:'비용', t:'헤세드 공동체 식사 대접 여부 · 규모', n:'예산에 아직 들어 있지 않습니다.' },
+    { c:'사역', t:'선교물품(어린이 예배당 · 공부방) 품목 · 준비 담당', n:'기도편지에 적힌 필요: 성경책, 학용품, 형편이 어려운 아이들의 교복. 선교사님께 한 번 더 여쭤봅니다.' },
+    { c:'사역', t:'어린이 활동(풍선 · 종이접기 · 페이스 페인팅) 준비물 · 담당', n:'1/20(수) 오전 캄퐁스프 방과후 교실 · 로컬교회.' },
+    { c:'준비', t:'본진 항공권(박용규 · 정해란 · 김병균) 예약 시기 · 담당', n:'1/18 ZA216 11:20 인천 출발, 1/22 00:35 프놈펜 출발 → 07:40 인천 도착 편입니다. 태국팀 4명은 발권을 마쳤습니다.' },
+    { c:'준비', t:'여행자보험 가입 방법', n:'본진은 가입 방법을 정하고, 태국팀은 항공권과 함께 결제된 보험의 보장 기간(1/29까지)을 확인합니다.' },
+    { c:'준비', t:'캄보디아 e비자 · 전자입국신고 — 각자 신청할지, 한 사람이 모아서 할지', n:'e비자는 12월 말~1월 초, 전자입국신고는 1/11~17. 여권이 2027년 7월 18일 이후 만료인지 모두 확인합니다.' },
+    { c:'준비', t:'출국일 공항 집합 시간 · 장소, 좌석', n:'좌석은 미리 지정하지 않았습니다. 수속 때 부부만 붙여 달라고 요청하고, 다른 분들은 떨어져 앉아도 괜찮은지 정합니다. 수속은 각자 여권이 있어야 해서 한 사람이 대신할 수 없으니 모두 함께 모여 수속합니다.' },
+    { c:'준비', t:'역할 분담 — 회계 · 사진과 기록 · 탐방 보고 · 식사 준비 · 어린이 활동', n:'회계는 김재환 집사가 맡고, 지출은 구글 폼으로 기록합니다.' },
+    { c:'준비', t:'사진 공유 네이버 밴드 개설 · 이름', n:'이름은 선교사님께 먼저 여쭤보고 정합니다.' },
   ],
 };
 
