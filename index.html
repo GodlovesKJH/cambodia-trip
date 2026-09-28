@@ -214,9 +214,10 @@ function renderCover(){
   const r = REMINDERS.find(x => { const a = toDate(x.from), b = toDate(x.to); return a && b && today >= a && today <= b; });
   $('#remind').innerHTML = r ? `<a class="remind" href="#learn"><div><b>${esc(r.title)}</b>${esc(r.text)}</div><span class="go">안내 보기 ›</span></a>` : '';
 }
-// 출발 2~3주 전 e비자 신청 권장 기간 (처리 약 3영업일, 1/18 입국)
+// 기간 알림: e비자(출발 2~3주 전, 처리 약 3영업일) · 전자입국신고(도착 7일 전부터)
 const REMINDERS = [
   { from:'2026-12-28', to:'2027-01-08', title:'지금 캄보디아 e비자를 신청하세요', text:'1월 8일까지 공식 사이트(evisa.gov.kh)에서 신청 · 받은 비자는 출력해서 여권과 함께' },
+  { from:'2027-01-11', to:'2027-01-17', title:'지금 전자입국신고(e-Arrival)를 제출하세요', text:'1월 17일까지 공식 사이트(arrival.gov.kh)에서 제출 · 완료 화면(QR)을 캡처해 두세요' },
 ];
 
 /* ---------- 메뉴 ---------- */
