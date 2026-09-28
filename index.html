@@ -27,6 +27,9 @@ body{font-family:var(--sans);color:var(--ink);background:var(--wash);font-size:1
 .dday{display:flex;align-items:baseline;gap:10px;border-top:1px solid rgba(255,255,255,.22);padding-top:16px}
 .dday b{font-family:var(--serif);font-size:46px;line-height:1;color:#F2D49B;font-weight:700}
 .dday span{font-size:15px;opacity:.92}
+.remind{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 12px;border-radius:10px;background:#F2D49B;color:#3B2A08;text-decoration:none;font-size:14px;line-height:1.45}
+.remind b{display:block;font-size:15px}
+.remind .go{margin-left:auto;font-weight:700;white-space:nowrap}
 
 /* 메뉴 */
 nav.tabs{position:sticky;top:0;z-index:10;background:var(--paper);border-bottom:1px solid var(--line);display:flex;overflow-x:auto;scrollbar-width:none}
@@ -166,6 +169,7 @@ footer button{font:inherit;font-size:13px;color:var(--leaf);background:none;bord
     <p id="dates">&nbsp;</p>
     <h1 id="title">캄보디아 선교 답사</h1>
     <div class="dday" id="dday"></div>
+    <div id="remind"></div>
   </header>
   <nav class="tabs" id="tabs" role="tablist" aria-label="메뉴"></nav>
   <main id="main" role="tabpanel"><p class="lead">내용을 불러오는 중입니다.</p></main>
@@ -206,7 +210,14 @@ function renderCover(){
     else html = `<span>답사를 마쳤습니다. 함께해 주셔서 감사합니다.</span>`;
   }
   $('#dday').innerHTML = html;
+  // 기간 알림 (예: e비자 신청 기간) — 해당 기간에만 표지 아래에 보임
+  const r = REMINDERS.find(x => { const a = toDate(x.from), b = toDate(x.to); return a && b && today >= a && today <= b; });
+  $('#remind').innerHTML = r ? `<a class="remind" href="#learn"><div><b>${esc(r.title)}</b>${esc(r.text)}</div><span class="go">안내 보기 ›</span></a>` : '';
 }
+// 출발 2~3주 전 e비자 신청 권장 기간 (처리 약 3영업일, 1/18 입국)
+const REMINDERS = [
+  { from:'2026-12-28', to:'2027-01-08', title:'지금 캄보디아 e비자를 신청하세요', text:'1월 8일까지 공식 사이트(evisa.gov.kh)에서 신청 · 받은 비자는 출력해서 여권과 함께' },
+];
 
 /* ---------- 메뉴 ---------- */
 function current(){ const h = location.hash.slice(1); return TABS.some(t => t[0] === h) ? h : 'schedule'; }
@@ -531,7 +542,7 @@ const MEETING = {
     { c:'비용', t:'헤세드 공동체 식사 대접 여부 · 규모', n:'예산에 아직 들어 있지 않습니다.' },
     { c:'사역', t:'선교물품(어린이 예배당 · 공부방) 품목 · 준비 담당', n:'기도편지에 적힌 필요: 성경책, 학용품, 형편이 어려운 아이들의 교복. 선교사님께 한 번 더 여쭤봅니다.' },
     { c:'사역', t:'어린이 활동(풍선 · 종이접기 · 페이스 페인팅) 준비물 · 담당', n:'1/20(수) 오전 캄퐁스프 방과후 교실 · 로컬교회.' },
-    { c:'준비', t:'본진 항공권(박용규 · 정해란 · 김병균) 예약 시기 · 담당', n:'1/18 ZA216 11:20 인천 출발, 1/22 00:35 프놈펜 출발 → 07:40 인천 도착 편입니다. 태국팀 4명은 발권을 마쳤습니다.' },
+    { c:'준비', t:'본진 항공권 — 박용규 목사님 · 정해란 사모님 예매', n:'여권이 준비되면 예매할 예정입니다(10월 초순 예상). 1/18 ZA216 11:20 인천 출발, 1/22 00:35 프놈펜 출발 → 07:40 인천 도착 편입니다. 태국팀 4명과 김병균 집사님은 발권을 마쳤습니다.' },
     { c:'준비', t:'여행자보험 가입 방법', n:'본진은 가입 방법을 정하고, 태국팀은 항공권과 함께 결제된 보험의 보장 기간(1/29까지)을 확인합니다.' },
     { c:'준비', t:'캄보디아 e비자 · 전자입국신고 — 각자 신청할지, 한 사람이 모아서 할지', n:'e비자는 12월 말~1월 초, 전자입국신고는 1/11~17. 여권이 2027년 7월 18일 이후 만료인지 모두 확인합니다.' },
     { c:'준비', t:'출국일 공항 집합 시간 · 장소, 좌석', n:'좌석은 미리 지정하지 않았습니다. 수속 때 부부만 붙여 달라고 요청하고, 다른 분들은 떨어져 앉아도 괜찮은지 정합니다. 수속은 각자 여권이 있어야 해서 한 사람이 대신할 수 없으니 모두 함께 모여 수속합니다.' },
