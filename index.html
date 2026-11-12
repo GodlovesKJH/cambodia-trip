@@ -135,6 +135,10 @@ h2.chapter{font-family:var(--serif);font-size:26px;line-height:1.35;margin:0 0 6
 .phrase .km{font-family:'Noto Sans Khmer',sans-serif;font-size:15px;color:var(--ink)}
 .phrase .note{display:block;font-size:12px;color:var(--sugar-ink);margin-top:2px}
 .phrase.wide{grid-column:1 / -1}
+.song{display:block;border:1px solid var(--line);border-radius:10px;overflow:hidden;text-decoration:none;color:inherit;margin:0 0 14px;background:var(--paper)}
+.song img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--sugar-soft)}
+.song b{display:block;padding:12px 14px 2px;color:var(--leaf);font-size:17px}
+.song span{display:block;padding:0 14px 13px;color:var(--muted);font-size:14px}
 .tips{list-style:none;margin:0;padding:0}
 .tips li{padding:11px 0;border-bottom:1px solid var(--line)}
 .tips b{display:block}
@@ -365,6 +369,8 @@ const VIEWS = {
       ['l-church', '캄보디아 기독교 역사', '거의 사라졌다가 다시 세워진 교회입니다.', years(L.church) + `<p>${more(L.churchMore)}</p>`],
       ['l-words', '생활 캄보디아어', '한글 발음은 가깝게 적은 것입니다. 현지에서 선교사님께 한 번 들어 보세요.',
         `<div class="phrases">${L.words.map(w => `<div class="phrase${w.wide ? ' wide' : ''}"><small>${esc(w.ko)}</small><b>${esc(w.say)}</b><span class="km" lang="km">${esc(w.km)}</span>${w.note ? `<span class="note">${esc(w.note)}</span>` : ''}</div>`).join('')}</div><p>${more(L.wordsMore)}</p>`],
+      ['l-song', '함께 부를 찬양', '현지 교인들과 크메르어로 함께 부르려고 준비하는 찬양입니다. 출발 전에 여러 번 들어 귀에 익혀 주세요.',
+        `<a class="song" href="${esc(L.song.url)}" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/${esc(L.song.id)}/hqdefault.jpg" alt="" loading="lazy"><b>${esc(L.song.t)}</b><span>${esc(L.song.d)}</span></a><ul class="tips">${L.song.tips.map(m => `<li><b>${esc(m.t)}</b><span>${esc(m.d)}</span></li>`).join('')}</ul>`],
       ['l-manners', '예절과 생활 팁', '작은 배려가 현지 분들께 큰 존중으로 전해집니다.',
         `<ul class="tips">${L.manners.map(m => `<li><b>${esc(m.t)}</b><span>${esc(m.d)}</span></li>`).join('')}</ul>`],
     ];
@@ -526,6 +532,17 @@ const LEARN = {
     { ko:'숫자 1 · 2 · 3 · 4 · 5 · 10', say:'무오이 · 삐 · 버이 · 부언 · 쁘람 · 덥', km:'មួយ · ពីរ · បី · បួន · ប្រាំ · ដប់', wide:true },
   ],
   wordsMore: [['크메르어 알아보기', WIKI('크메르어')]],
+  song: {
+    id: '8ODn35An98c',
+    url: 'https://www.youtube.com/watch?v=8ODn35An98c',
+    t: '은혜 · 크메르어판 (손경민)',
+    d: '유튜브에서 듣기 ↗ · 화면에 가사의 한글 발음이 함께 나옵니다.',
+    tips: [
+      { t:'가사를 휴대폰에 담아 두려면', d:'영상을 멈추고 가사가 나오는 화면을 캡처해 사진첩에 모아 두세요. 현장에서는 인터넷이 약할 수 있습니다.' },
+      { t:'익히는 순서', d:'먼저 우리말 「은혜」를 떠올리며 끝까지 듣고, 그다음 한글 발음을 보며 한 줄씩 따라 부릅니다.' },
+      { t:'발음은 현지에서 한 번 더', d:'한글 표기는 가깝게 적은 것입니다. 교회에 도착하면 선교사님과 교인들께 듣고 맞춰 보세요.' },
+    ],
+  },
   manners: [
     { t:'인사는 합장(쏨뻬아)으로', d:'두 손을 가슴 앞에 모으고 가볍게 고개를 숙입니다. 어른이나 스님께는 손을 더 높이 올립니다.' },
     { t:'머리는 만지지 않기', d:'머리는 가장 귀한 곳으로 여깁니다. 귀엽더라도 아이들 머리를 쓰다듬지 마세요.' },
