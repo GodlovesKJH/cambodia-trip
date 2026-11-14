@@ -369,7 +369,7 @@ const VIEWS = {
       ['l-church', '캄보디아 기독교 역사', '거의 사라졌다가 다시 세워진 교회입니다.', years(L.church) + `<p>${more(L.churchMore)}</p>`],
       ['l-words', '생활 캄보디아어', '한글 발음은 가깝게 적은 것입니다. 현지에서 선교사님께 한 번 들어 보세요.',
         `<div class="phrases">${L.words.map(w => `<div class="phrase${w.wide ? ' wide' : ''}"><small>${esc(w.ko)}</small><b>${esc(w.say)}</b><span class="km" lang="km">${esc(w.km)}</span>${w.note ? `<span class="note">${esc(w.note)}</span>` : ''}</div>`).join('')}</div><p>${more(L.wordsMore)}</p>`],
-      ['l-song', '함께 부를 찬양', '현지 교인들과 크메르어로 함께 부르려고 준비하는 찬양입니다. 출발 전에 여러 번 들어 귀에 익혀 주세요.',
+      ['l-song', '함께 부를 찬양', '가나안교회 교인들도 알고 부르는 찬양입니다. 현지에서 크메르어로 함께 부를 수 있도록 출발 전에 여러 번 들어 귀에 익혀 주세요.',
         `<a class="song" href="${esc(L.song.url)}" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/${esc(L.song.id)}/hqdefault.jpg" alt="" loading="lazy"><b>${esc(L.song.t)}</b><span>${esc(L.song.d)}</span></a><ul class="tips">${L.song.tips.map(m => `<li><b>${esc(m.t)}</b><span>${esc(m.d)}</span></li>`).join('')}</ul><p>${more(L.song.more)}</p>`],
       ['l-manners', '예절과 생활 팁', '작은 배려가 현지 분들께 큰 존중으로 전해집니다.',
         `<ul class="tips">${L.manners.map(m => `<li><b>${esc(m.t)}</b><span>${esc(m.d)}</span></li>`).join('')}</ul>`],
